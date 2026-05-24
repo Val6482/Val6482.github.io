@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Portfolio</title>
+
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: Arial, sans-serif;
+    }
+
+    body {
+      background: #0f172a;
+      color: white;
+      line-height: 1.5;
+    }
+
+    a {
+      text-decoration: none;
+      color: inherit;
+    }
+
+    img {
+      width: 100%;
+      display: block;
+      object-fit: cover;
+    }
+
+    /* ===== HEADER ===== */
+
+    header {
+      padding: 80px 20px;
+      text-align: center;
+      background: linear-gradient(135deg, #111827, #1e293b);
+    }
+
+    header h1 {
+      font-size: 52px;
+      margin-bottom: 15px;
+    }
+
+    header p {
+      max-width: 700px;
+      margin: 0 auto;
+      color: #cbd5e1;
+      font-size: 18px;
+    }
+
+    /* ===== GALLERY ===== */
+
+    .container {
+      width: 90%;
+      max-width: 1300px;
+      margin: 50px auto;
+    }
+
+    .section-title {
+      font-size: 36px;
+      margin-bottom: 30px;
+      text-align: center;
+    }
+
+    .gallery {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 25px;
+    }
+
+    .project-card {
+      background: #1e293b;
+      border-radius: 16px;
+      overflow: hidden;
+      cursor: pointer;
+      transition: 0.3s;
+      border: 1px solid transparent;
+    }
+
+    .project-card:hover {
+      transform: translateY(-6px);
+      border-color: #3b82f6;
+    }
+
+    .project-image {
+      height: 220px;
+      overflow: hidden;
+    }
+
+    .project-content {
+      padding: 20px;
+    }
+
+    .project-content h3 {
+      margin-bottom: 10px;
+      font-size: 24px;
+    }
+
+    .project-content p {
+      color: #cbd5e1;
+      font-size: 15px;
+    }
+
+    /* ===== MODAL ===== */
+
+    .modal {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.85);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      z-index: 999;
+    }
+
+    .modal.active {
+      display: flex;
+    }
+
+    .modal-content {
+      background: #111827;
+      width: 100%;
+      max-width: 950px;
+      border-radius: 18px;
+      overflow: hidden;
+      position: relative;
+      animation: modalShow 0.3s ease;
+      max-height: 90vh;
+      overflow-y: auto;
+    }
+
+    @keyframes modalShow {
+      from {
+        opacity: 0;
+        transform: scale(0.9);
+      }
+      to {
+        opacity: 1;
+        transform: scale(1);
+      }
+    }
+
+    .modal-close {
+      position: absolute;
+      right: 20px;
+      top: 15px;
+      font-size: 34px;
+      cursor: pointer;
+      color: white;
+      z-index: 5;
+    }
+
+    .modal-gallery {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 10px;
+      padding: 20px;
+    }
+
+    .modal-gallery img {
+      border-radius: 12px;
+      height: 220px;
+    }
+
+    .modal-info {
+      padding: 0 20px 30px;
+    }
+
+    .modal-info h2 {
+      margin-bottom: 15px;
+      font-size: 36px;
+    }
+
+    .modal-info p {
+      color: #cbd5e1;
+      margin-bottom: 15px;
+    }
+
+    /* ===== FOOTER ===== */
+
+    footer {
+      text-align: center;
+      padding: 30px 20px;
+      color: #94a3b8;
+    }
+
+    /* ===== MOBILE ===== */
+
+    @media (max-width: 768px) {
+      header h1 {
+        font-size: 36px;
+      }
+
+      .section-title {
+        font-size: 28px;
+      }
+
+      .modal-info h2 {
+        font-size: 28px;
+      }
+
+      .project-image {
+        height: 200px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ===== HEADER ===== -->
+
+  <header>
+    <!-- ИЗМЕНЯЙ ЗДЕСЬ -->
+    <h1>Шмырёв валерий</h1>
+    <p>
+      Здесь собраны проекты созданные мной и проекты которые созданы с помощью Искуственного интелекта(ии)
+    </p>
+  </header>
+
+  <!-- ===== PROJECTS ===== -->
+
+  <section class="container">
+    <h2 class="section-title">Проекты</h2>
+
+    <div class="gallery" id="gallery"></div>
+  </section>
+
+  <!-- ===== MODAL ===== -->
+
+  <div class="modal" id="modal">
+    <div class="modal-content">
+
+      <span class="modal-close" id="closeModal">&times;</span>
+
+      <div class="modal-gallery" id="modalGallery"></div>
+
+      <div class="modal-info">
+        <h2 id="modalTitle"></h2>
+        <p id="modalDescription"></p>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ===== FOOTER ===== -->
+
+  <footer>
+    © 2026 Моё Портфолио
+  </footer>
+
+  <script>
+    /*
+    ====================================================
+    ИЗМЕНЯЙ ПРОЕКТЫ ЗДЕСЬ
+    ====================================================
+
+    title        -> Название проекта
+    shortText    -> Краткий текст на карточке
+    description  -> Полное описание в модальном окне
+    cover        -> Главная картинка проекта
+    images       -> Массив картинок проекта
+
+    Для замены изображений:
+    Просто поменяй ссылки на свои изображения.
+    Можно использовать:
+    - локальные файлы: images/project1.jpg
+    - или ссылки из интернета
+    */
+
+    const projects = [
+      {
+        title: "Игра созданная нейросетью",
+        shortText: "2Д шутер созданный нейросетью.",
+        description:
+          "2Д шутер созданный с помощью нейросети, в котором есть враги и босс.",
+
+        cover:
+          "code.png",
+            
+        images: [
+          "ghg.png",
+          "game.png",
+          "game2.png"
+        ]
+      },
+
+      {
+        title: "Ping-Pong",
+        shortText: "Игра пинг понг созданная ИИ",
+        description:
+          "Минималистичная игра пинг понг созданная ИИ",
+
+        cover:
+          "Pong.png",
+
+        images: [
+          "Pong_code.png",
+          "pong2.PNG",
+          "pongg.png"
+        ]
+      },
+
+      {
+        title: "Spacerun",
+        shortText: "Игра в которой надо уклоняться от метеоритов.",
+        description:
+          "Игра в которой на корабле в космосе надо уклоняться от метеоритов.",
+
+        cover:
+          "meteors.PNG",
+
+        images: [
+          "code3.png",
+          "fail.PNG",
+          ""
+        ]
+      },
+       {
+        title: "Figma",
+        shortText: "Сайт, на котором создаётся дизайн для разных сайтов",
+        description:
+          "Сайт, в котором можно создать дизайн для своего сайта.",
+
+        cover:
+          "dss.PNG",
+
+        images: [
+         
+        ]
+      }, 
+      {
+        title: "tilda",
+        shortText: "Сайт, на котором можно создать собственный сайт. ",
+        description:
+          "Сайт, на котором можно создать свой собственный сайт для разных целей.",
+
+        cover:
+          "tilda.PNG",
+
+        images: [
+          
+        ]
+      }
+    ];
+
+    // ===== GENERATE PROJECTS =====
+
+    const gallery = document.getElementById("gallery");
+
+    projects.forEach((project, index) => {
+      const card = document.createElement("div");
+      card.classList.add("project-card");
+
+      card.innerHTML = `
+        <div class="project-image">
+          <img src="${project.cover}" alt="${project.title}">
+        </div>
+
+        <div class="project-content">
+          <h3>${project.title}</h3>
+          <p>${project.shortText}</p>
+        </div>
+      `;
+
+      card.addEventListener("click", () => openModal(index));
+
+      gallery.appendChild(card);
+    });
+
+    // ===== MODAL =====
+
+    const modal = document.getElementById("modal");
+    const closeModal = document.getElementById("closeModal");
+
+    const modalTitle = document.getElementById("modalTitle");
+    const modalDescription = document.getElementById("modalDescription");
+    const modalGallery = document.getElementById("modalGallery");
+
+    function openModal(index) {
+      const project = projects[index];
+
+      modalTitle.textContent = project.title;
+      modalDescription.textContent = project.description;
+
+      modalGallery.innerHTML = "";
+
+      project.images.forEach(image => {
+        const img = document.createElement("img");
+        img.src = image;
+
+        modalGallery.appendChild(img);
+      });
+
+      modal.classList.add("active");
+    }
+
+    // Закрытие модального окна
+
+    closeModal.addEventListener("click", () => {
+      modal.classList.remove("active");
+    });
+
+    modal.addEventListener("click", (e) => {
+      if (e.target === modal) {
+        modal.classList.remove("active");
+      }
+    });
+
+    // ESC закрытие
+
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "Escape") {
+        modal.classList.remove("active");
+      }
+    });
+  </script>
+
+</body>
+</html>
